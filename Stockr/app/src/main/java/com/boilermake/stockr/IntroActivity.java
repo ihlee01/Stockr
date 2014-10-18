@@ -22,12 +22,13 @@ public class IntroActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_intro);
 
+        registerGCM();
+
         // Delay for 1 sec
         handler = new Handler();
         handler.postDelayed(irun, 1200);
 
-        registerGCM();
-
+        Log.e("RegisterID",GCMRegistrar.getRegistrationId(this));
     }
 
     Runnable irun = new Runnable() {
