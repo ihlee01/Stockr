@@ -17,12 +17,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     private SharedPreferences mPrefs;
 
-    public GCMIntentService() {
-
-        mPrefs = getSharedPreferences("data",0); // initialize SharedPreference
-
-    }
-
     private static void generateNotification(Context context, String message) {
 
         int icon = R.drawable.ic_launcher;
@@ -62,9 +56,6 @@ public class GCMIntentService extends GCMBaseIntentService {
     @Override
     protected void onRegistered(Context context, String reg_id) {
         Log.e("Register the key.(GCM INTENT_SERVICE)",reg_id);
-        SharedPreferences.Editor edit = mPrefs.edit();
-        edit.putString("regID",reg_id);
-        edit.commit();
     }
 
     @Override
