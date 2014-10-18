@@ -56,6 +56,9 @@ public class IntroActivity extends Activity {
             GCMRegistrar.register(this,"817225698371"); // project number
         } else {
             Log.e("id",regID);
+            SharedPreferences.Editor edit = mPrefs.edit();
+            edit.putString("RegID",regID);
+            edit.commit();
         }
     }
 
