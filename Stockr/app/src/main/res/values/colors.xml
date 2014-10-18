@@ -15,4 +15,6 @@
     <color name="pacers_navy">#002F62</color>
     <color name="blue">#00A1DE</color>
     <color name="orange">#FFA100</color>
+    <color name="light_grey">#eee</color>
+    <color name="heavy_grey">#ccc</color>
 </resources>
