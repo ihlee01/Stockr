@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.android.gcm.GCMBaseIntentService;
@@ -13,6 +14,14 @@ import com.google.android.gcm.GCMBaseIntentService;
  * Created by Yongsun on 10/18/14.
  */
 public class GCMIntentService extends GCMBaseIntentService {
+
+    private SharedPreferences mPrefs;
+
+    public GCMIntentService() {
+
+        mPrefs = getSharedPreferences("data",0); // initialize SharedPreference
+
+    }
 
     private static void generateNotification(Context context, String message) {
 
@@ -53,6 +62,9 @@ public class GCMIntentService extends GCMBaseIntentService {
     @Override
     protected void onRegistered(Context context, String reg_id) {
         Log.e("Register the key.(GCM INTENT_SERVICE)",reg_id);
+        SharedPreferences.Editor edit = mPrefs.edit();
+        edit.putString("regID",reg_id);
+        edit.commit();
     }
 
     @Override

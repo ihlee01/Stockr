@@ -2,6 +2,7 @@ package com.boilermake.stockr;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -14,6 +15,7 @@ import com.google.android.gcm.GCMRegistrar;
 public class IntroActivity extends Activity {
 
     Handler handler;
+    SharedPreferences mPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,13 +24,15 @@ public class IntroActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_intro);
 
-        registerGCM();
+        mPrefs = getSharedPreferences("data",0); // initialize SharedPreferences
+
+        registerGCM(); // register GCM and get registration ID
 
         // Delay for 1 sec
         handler = new Handler();
         handler.postDelayed(irun, 1200);
 
-        Log.e("RegisterID",GCMRegistrar.getRegistrationId(this));
+        //Log.e("RegisterID",GCMRegistrar.getRegistrationId(this));
     }
 
     Runnable irun = new Runnable() {
