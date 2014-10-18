@@ -26,6 +26,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:windowSoftInputMode="stateHidden"
             android:name=".SubsActivity"
             android:label="@string/title_activity_subs" >
         </activity>
