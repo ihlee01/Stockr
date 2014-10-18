@@ -12,7 +12,7 @@
         android:id="@+id/prefScrollView"
         android:layout_above="@+id/next">
         <RelativeLayout
-            android:visibility="visible"
+            android:visibility="gone"
             android:id="@+id/subs_layout"
             android:layout_width="fill_parent"
             android:layout_height="450dp"

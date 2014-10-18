@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.RelativeLayout;
 
 
 public class SubsActivity extends Activity {
@@ -12,6 +16,11 @@ public class SubsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subs);
+        Animation slideup = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slideup);
+        RelativeLayout layout = (RelativeLayout)findViewById(R.id.subs_layout);
+
+        layout.startAnimation(slideup);
+        layout.setVisibility(View.VISIBLE);
     }
 
 
