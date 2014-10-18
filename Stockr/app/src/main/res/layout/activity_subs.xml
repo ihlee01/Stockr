@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:background="#fff"
         android:id="@+id/prefScrollView"
-        android:layout_above="@+id/next">
+        android:layout_above="@+id/subs_button">
 
         <RelativeLayout
             android:visibility="visible"
@@ -83,13 +83,37 @@
                         android:textSize="20sp"
                         android:background="#fff" />
                 </RelativeLayout>
-
-
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/company_layout"
+                android:layout_below="@id/type_layout"
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                >
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:textColor="#000"
+                    android:textSize="20sp"
+                    android:text="COMPANY:"
+                    android:layout_marginBottom="10dp"/>
+
+                <ListView
+                    android:id="@+id/company_list"
+                    android:background="@drawable/shape"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp">
+                </ListView>>
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/value_layout"
-                android:layout_below="@id/type_layout"
+                android:layout_below="@id/company_layout"
                 android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -128,6 +152,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center_vertical"
+                android:layout_marginBottom="15dp"
                 android:weightSum="10">
 
                 <TextView
@@ -173,35 +198,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/company_layout"
-                android:layout_below="@id/association_layout"
-                android:layout_marginTop="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_vertical"
-                >
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:textColor="#000"
-                    android:textSize="20sp"
-                    android:text="COMPANY:"
-                    android:layout_marginBottom="10dp"/>
-
-                <Button
-                    android:id="@+id/company_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_weight="6"
-                    android:text="SELECT"
-                    android:textColor="#eee"
-                    android:background="@drawable/blue_shape"
-                    android:gravity="center" />
-            </LinearLayout>
         </RelativeLayout>
     </ScrollView>
 
