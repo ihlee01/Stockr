@@ -8,15 +8,16 @@
         android:layout_alignParentTop="true"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="#ccc"
+        android:background="#fff"
         android:id="@+id/prefScrollView"
         android:layout_above="@+id/next">
+
         <RelativeLayout
-            android:visibility="gone"
+            android:visibility="visible"
             android:id="@+id/subs_layout"
             android:layout_width="fill_parent"
             android:layout_height="450dp"
-            android:background="@drawable/shape"
+            android:background="@drawable/grey_shape"
             android:paddingBottom="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginRight="5dp"
@@ -31,115 +32,177 @@
                 android:id="@+id/type_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:weightSum="10">
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textColor="@color/pacers_navy"
+                    android:textColor="#000"
                     android:textSize="20sp"
-                    android:text="TYPE:"/>
-                <Spinner
-                    android:id="@+id/type_spinner"
-                    android:layout_width="0dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="TYPE:" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
-                    android:background="@android:drawable/btn_dropdown"
-                    android:spinnerMode="dropdown"></Spinner>
+                    android:orientation="horizontal"
+                    android:weightSum="10"
+                    android:background="@drawable/shape"
+                    android:padding="10dp"
+                    android:layout_marginTop="5dp">
+
+                    <Button
+                        android:id="@+id/instant_button"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:textColor="#eee"
+                        android:text="INSTANT"
+                        android:textSize="20sp"
+                        android:background="@drawable/blue_shape" />
+
+                    <Button
+                        android:id="@+id/spatial_button"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#ccc"
+                        android:text="SPATIAL"
+                        android:textSize="20sp"
+                        android:layout_centerInParent="true"
+                        android:background="#fff" />
+
+                    <Button
+                        android:id="@+id/time_button"
+                        android:layout_width="100dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="wrap_content"
+                        android:textColor="#ccc"
+                        android:text="TIME"
+                        android:textSize="20sp"
+                        android:background="#fff" />
+                </RelativeLayout>
+
+
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/value_layout"
                 android:layout_below="@id/type_layout"
                 android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:weightSum="10">
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textColor="@color/pacers_navy"
+                    android:textColor="#000"
                     android:textSize="20sp"
-                    android:text="VALUE:"/>
+                    android:text="VALUE:"
+                    android:layout_marginBottom="10dp"/>
+
                 <EditText
                     android:id="@+id/input_value"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="62dp"
                     android:layout_weight="6"
                     android:text="41"
+                    android:background="@drawable/shape"
+                    android:padding="10dp"
+                    android:textSize="25sp"
                     android:gravity="center"
-                    android:inputType="number"/>
+                    android:inputType="number" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/association_layout"
                 android:layout_below="@id/value_layout"
                 android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:gravity="center_vertical"
                 android:weightSum="10">
+
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textColor="@color/pacers_navy"
+                    android:textColor="#000"
                     android:textSize="20sp"
-                    android:text="ASSOCIATION:"/>
-                <RadioGroup
-                    android:id="@+id/association_radio"
-                    android:layout_width="0dp"
+                    android:text="ASSOCIATION:"
+                    android:layout_marginBottom="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-                    <RadioButton
-                        android:id="@+id/radio_greater"
-                        android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="10"
+                    android:background="@drawable/shape"
+                    android:padding="10dp"
+                    android:gravity="center_vertical|center_horizontal|center"
+                    android:layout_marginTop="5dp">
+
+                    <Button
+                        android:id="@+id/greater_button"
+                        android:layout_toLeftOf="@+id/lesser_button"
+                        android:layout_width="0dp"
+                        android:layout_weight="5"
                         android:layout_height="wrap_content"
-                        android:text="Greater"
-                        android:checked="true"/>
-                    <RadioButton
-                        android:id="@+id/radio_lesser"
-                        android:layout_width="wrap_content"
+                        android:textColor="#eee"
+                        android:text="GREATER"
+                        android:textSize="20sp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/blue_shape" />
+                    <Button
+                        android:id="@+id/lesser_button"
+                        android:layout_centerInParent="true"
+                        android:layout_width="0dp"
+                        android:layout_weight="5"
                         android:layout_height="wrap_content"
-                        android:text="Lesser"
-                        android:checked="false"/>
-                </RadioGroup>
+                        android:textColor="#ccc"
+                        android:text="LESSER"
+                        android:textSize="20sp"
+                        android:background="#fff" />
+                </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/company_layout"
                 android:layout_below="@id/association_layout"
                 android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:gravity="center_vertical"
-                android:weightSum="10">
+                >
+
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textColor="@color/pacers_navy"
+                    android:textColor="#000"
                     android:textSize="20sp"
-                    android:text="COMPANY:"/>
+                    android:text="COMPANY:"
+                    android:layout_marginBottom="10dp"/>
+
                 <Button
                     android:id="@+id/company_button"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
                     android:layout_weight="6"
                     android:text="SELECT"
-                    android:textStyle="bold"
-                    android:textColor="#fff"
+                    android:textColor="#eee"
                     android:background="@drawable/blue_shape"
-                    android:gravity="center"/>
+                    android:gravity="center" />
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>
+
     <Button
         android:layout_alignParentBottom="true"
         android:layout_width="fill_parent"
