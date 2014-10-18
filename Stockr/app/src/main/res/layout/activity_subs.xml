@@ -94,6 +94,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:focusableInTouchMode="true"
+
                 android:gravity="center_vertical">
 
                 <TextView
@@ -110,11 +112,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="62dp"
                     android:layout_weight="6"
-                    android:text="41"
                     android:background="@drawable/shape"
                     android:padding="10dp"
-                    android:textSize="25sp"
+                    android:textSize="22sp"
                     android:gravity="center"
+                    android:hint="Enter value here"
                     android:inputType="number" />
             </LinearLayout>
 
@@ -208,7 +210,7 @@
         android:layout_width="fill_parent"
         android:layout_height="60dp"
         android:text="SUBSCRIBE"
-        android:id="@+id/next"
+        android:id="@+id/subs_button"
         android:background="@color/start_green"
         android:textColor="@color/white"
         android:textSize="23sp"

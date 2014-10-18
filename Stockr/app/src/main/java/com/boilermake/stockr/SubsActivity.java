@@ -21,8 +21,11 @@ public class SubsActivity extends Activity {
     Button greater_button;
     Button lesser_button;
     Button company_button;
+    Button subs_butotn;
     EditText input_value;
 
+    int type = 0;
+    int association = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,8 +44,15 @@ public class SubsActivity extends Activity {
         lesser_button = (Button) findViewById(R.id.lesser_button);
         company_button = (Button) findViewById(R.id.company_button);
         input_value = (EditText) findViewById(R.id.input_value);
+        subs_butotn = (Button) findViewById(R.id.subs_button);
 
         //Event Listener
+        input_value.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                input_value.setHint("");
+            }
+        });
 
         //1. Type Buttons
         instant_button.setOnClickListener(new View.OnClickListener() {
@@ -56,6 +66,8 @@ public class SubsActivity extends Activity {
 
                 time_button.setBackgroundColor(Color.WHITE);
                 time_button.setTextColor(getResources().getColor(R.color.heavy_grey));
+
+                type = 1;
             }
         });
         spatial_button.setOnClickListener(new View.OnClickListener() {
@@ -70,6 +82,7 @@ public class SubsActivity extends Activity {
                 time_button.setBackgroundColor(Color.WHITE);
                 time_button.setTextColor(getResources().getColor(R.color.heavy_grey));
 
+                type = 2;
             }
         });
         time_button.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +98,7 @@ public class SubsActivity extends Activity {
                 instant_button.setBackgroundColor(Color.WHITE);
                 instant_button.setTextColor(getResources().getColor(R.color.heavy_grey));
 
+                type = 3;
             }
         });
 
@@ -98,6 +112,8 @@ public class SubsActivity extends Activity {
 
                 lesser_button.setBackgroundColor(Color.WHITE);
                 lesser_button.setTextColor(getResources().getColor(R.color.heavy_grey));
+
+                association = 1;
             }
         });
         lesser_button.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +124,17 @@ public class SubsActivity extends Activity {
 
                 greater_button.setBackgroundColor(Color.WHITE);
                 greater_button.setTextColor(getResources().getColor(R.color.heavy_grey));
+
+                association = 2;
+            }
+        });
+
+        //3. Subscribe button
+        subs_butotn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Send data to server here...
+
 
             }
         });
