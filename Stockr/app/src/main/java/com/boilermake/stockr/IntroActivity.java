@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import com.google.android.gcm.GCMRegistrar;
 
 
 public class IntroActivity extends Activity {
@@ -23,6 +25,9 @@ public class IntroActivity extends Activity {
         // Delay for 1 sec
         handler = new Handler();
         handler.postDelayed(irun, 1200);
+
+        registerGCM();
+
     }
 
     Runnable irun = new Runnable() {
@@ -35,6 +40,19 @@ public class IntroActivity extends Activity {
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
     };
+
+    public void registerGCM() {
+        GCMRegistrar.checkDevice(this);
+        GCMRegistrar.checkManifest(this);
+
+        final String regID = GCMRegistrar.getRegistrationId(this);
+
+        if(regID.equals("")) {
+            GCMRegistrar.register(this,"817225698371"); // project number
+        } else {
+            Log.e("id",regID);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
