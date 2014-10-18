@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SubsActivity"
+            android:label="@string/title_activity_subs" >
+        </activity>
+        <activity
+            android:name=".BoardActivity"
+            android:label="@string/title_activity_board" >
+        </activity>
     </application>
 
 </manifest>
