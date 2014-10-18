@@ -2,9 +2,8 @@
 <resources>
 
     <string name="app_name">Stockr</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_subs">SubsActivity</string>
-    <string name="title_activity_board">BoardActivity</string>
+    <string name="title_activity_subs">Subscribe</string>
+    <string name="title_activity_board">Dashboard</string>
 
 </resources>

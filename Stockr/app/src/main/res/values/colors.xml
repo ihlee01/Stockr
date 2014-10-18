@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="lightest">#ffE8DDCB</color>
+    <color name="light">#ffCDB380</color>
+    <color name="medium">#ff033649</color>
+    <color name="dark">#ff031634</color>
+    <color name="white">#fff</color>
+    <color name="grey">#8C8C8C</color>
+    <color name="green_pressed">#ff669900</color>
+    <color name="start_green">#89C60F</color>
+    <color name="stop_red">#E05206</color>
+    <color name="red_pressed">#E13A07</color>
+    <color name="resume_yellow">#EAAB00</color>
+    <color name="pacers_yellow">#EAAB00</color>
+    <color name="pacers_navy">#002F62</color>
+    <color name="blue">#00A1DE</color>
+    <color name="orange">#FFA100</color>
+</resources>
