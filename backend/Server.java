@@ -18,7 +18,11 @@ import java.lang.StringBuilder;
 import java.util.*;
 import org.json.*;
 
-public class Server {
+public class Server implements Runnable{
+    Socket client;
+    public Server(Socket sck) {
+        this.client = sck;
+    }
 
     public static class StockObj {
         int type;
@@ -84,6 +88,7 @@ public class Server {
         return new StockObj(type, association, timeWindow, subId, val, gcm, symbs);
     }
     
+
     public static void main(String args[]) {
         try {
             // Get the port to listen on
@@ -96,11 +101,24 @@ public class Server {
             // Create a ServerSocket to listen on that port.
             ServerSocket ss = new ServerSocket(port);
             // Now enter an infinite loop, waiting for & handling connections.
-            for (;;) {
+            while(true) {
                 // Wait for a client to connect. The method will block;
                 // when it returns the socket will be connected to the client
                 Socket client = ss.accept();
 
+                System.out.println("Connection!");
+                new Thread(new Server(client)).start();
+                } // Now loop again, waiting for the next connection
+            }
+            // If anything goes wrong, print an error message
+            catch (Exception e) {
+                System.err.println(e);
+                System.err.println("Usage: java Server <port > 1023>");
+            }
+        }
+
+        public void run() {
+            try {
                 // Get input streams to read from the client
                 BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
@@ -112,7 +130,8 @@ public class Server {
                     info.append(line);
                 }
 
-                System.out.println(info.toString());
+                System.out.println(client.isConnected());
+
                 StockObj stk = parseJsonString(info.toString());
                 System.out.print("Type:" + stk.getType() + " timewindow:" + stk.getTimeWindow() 
                     + " association:" + stk.getAssociation() + " Value:" + stk.getValue() + " SubId:" + 
@@ -124,12 +143,8 @@ public class Server {
                 
                 in.close(); // Close the input stream
                 client.close(); // Close the socket itself
-                } // Now loop again, waiting for the next connection
-            }
-            // If anything goes wrong, print an error message
-            catch (Exception e) {
-                System.err.println(e);
-                System.err.println("Usage: java Server <port > 1023>");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 }
