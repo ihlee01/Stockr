@@ -28,7 +28,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         String title = context.getString(R.string.app_name);
 
-        /*
+
         Intent notificationIntent = new Intent(context, IntroActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent intent = PendingIntent.getActivity(context,0,notificationIntent,0);
@@ -37,15 +37,18 @@ public class GCMIntentService extends GCMBaseIntentService {
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         notificationManager.notify(0, notification);
-        */
+
 
     }
 
     @Override
     protected void onMessage(Context context, Intent intent) {
         String msg = intent.getStringExtra("msg");
+        String msg2 = intent.getStringExtra("msg2");
         Log.e("getMessage", "getMessage:"+msg);
+
         generateNotification(context,msg);
+        generateNotification(context,msg2);
     }
 
     @Override
