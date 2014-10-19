@@ -95,7 +95,6 @@ public class SubsActivity extends Activity {
     static String path = Environment.getExternalStorageDirectory() + "/SUBSdata/subs.dat";
 
 
-    MySQLiteHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,8 +114,6 @@ public class SubsActivity extends Activity {
                     .permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-
-        db = new MySQLiteHelper(this);
 
         //Components initializing
         instant_button = (Button) findViewById(R.id.instant_button);
