@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.os.Vibrator;
 import android.util.Base64;
 import android.util.Log;
@@ -15,10 +16,15 @@ import com.google.android.gcm.GCMBaseIntentService;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -28,11 +34,14 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     private SharedPreferences mPrefs;
     private boolean activityFound;
+    static String path = Environment.getExternalStorageDirectory() + "/SUBSdata/subs.dat";
+
 
     private static void generateNotification(Context context, String message) {
 
         int icon = R.drawable.ic_launcher;
         long when = System.currentTimeMillis();
+
 
         NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -83,10 +92,15 @@ public class GCMIntentService extends GCMBaseIntentService {
         String msg = intent.getStringExtra("gcm");
         int subId = intent.getIntExtra("subId", 0);
         double value = intent.getDoubleExtra("value", 0.0);
-        long tiestamp = intent.getLongExtra("timestamp", 0);
+        long timestamp = intent.getLongExtra("timestamp", 0);
 
 
-        // messages.add
+
+        HashMap<Integer, Subscribe> read_map = readSubsMap();
+        Subscribe sub_obj = read_map.get(subId);
+
+        BoardItem bitem = new BoardItem(sub_obj.getSymbol(), sub_obj.getType(), value, timestamp, sub_obj.getAssociation());
+        messages.add(bitem);
 
         SharedPreferences.Editor edit = mPrefs.edit();
 
@@ -116,6 +130,41 @@ public class GCMIntentService extends GCMBaseIntentService {
         generateNotification(context, msg);
     }
 
+    public static void saveSubsMap(HashMap<Integer,Subscribe> o){
+        File f = new File(path);
+        File store = new File(Environment.getExternalStorageDirectory() + "/SUBSdata");
+        if(!store.exists()){
+            store.mkdirs();
+            Log.e("MKDIR", "TRUE");
+        }
+
+        try{
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f)); //Select where you wish to save the file...
+            oos.writeObject(o); // write the class as an 'object'
+            oos.flush(); // flush the stream to insure all of the information was written to 'save.bin'
+            oos.close();// close the stream
+            Log.d("SUBS", "Intent: Map saved");
+
+        }catch(Exception e){
+            e.printStackTrace();
+            Log.d("SUBS", "save error: " + e.getMessage());
+        }
+    }
+
+    public static HashMap<Integer,Subscribe> readSubsMap(){
+        try{
+            File f = new File(path);
+            Log.d("SUBS", "Intent: Map read");
+            return (HashMap<Integer,Subscribe>) new ObjectInputStream(new FileInputStream(f)).readObject();
+        }catch(FileNotFoundException e){
+            Log.d("SUBS","FNE");
+            return new HashMap<Integer,Subscribe>();
+        }catch(Exception ex){
+            Log.d("SUBS","Null");
+            ex.printStackTrace();
+            return new HashMap<Integer,Subscribe>();
+        }
+    }
     @Override
     protected void onError(Context context, String s) {
 
