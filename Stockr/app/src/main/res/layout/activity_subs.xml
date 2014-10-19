@@ -141,7 +141,7 @@
                     android:padding="10dp"
                     android:textSize="22sp"
                     android:gravity="center"
-                    android:hint="Enter value here"
+                    android:hint="Enter value"
                     android:inputType="numberDecimal"
                     android:digits="0123456789."
                     />

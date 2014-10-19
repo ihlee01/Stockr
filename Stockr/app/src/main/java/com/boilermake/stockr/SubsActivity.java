@@ -101,6 +101,8 @@ public class SubsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subs);
+        overridePendingTransition(R.anim.in, R.anim.out);
+
         Animation slideup = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slideup);
         LinearLayout layout = (LinearLayout) findViewById(R.id.subs_layout);
 
@@ -362,6 +364,13 @@ public class SubsActivity extends Activity {
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.end_in, R.anim.end_out);
+    }
+
     public static void saveSubsMap(HashMap<Integer,Subscribe> o){
         File f = new File(path);
         File store = new File(Environment.getExternalStorageDirectory() + "/SUBSdata");

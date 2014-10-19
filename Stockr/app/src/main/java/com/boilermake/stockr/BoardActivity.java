@@ -93,8 +93,8 @@ public class BoardActivity extends Activity {
             generateList(board_list, R.layout.dashboard_item);
         }
         else {
-            Intent i = new Intent(BoardActivity.this, SubsActivity.class);
-            startActivity(i);
+            //Intent i = new Intent(BoardActivity.this, SubsActivity.class);
+            //startActivity(i);
         }
 
 
