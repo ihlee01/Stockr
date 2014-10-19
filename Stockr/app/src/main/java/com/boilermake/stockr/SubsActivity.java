@@ -335,43 +335,15 @@ public class SubsActivity extends Activity {
                     Log.e("JSON OBJ", json.toString());
 
                     //Do the httpRequest
-    //                doPost(json);
+                    doPost(json);
 
                     HashMap<Integer, Subscribe> map = readSubsMap();
 
-                    Log.e("SYMBOL", symbols.toString());
 
-                    String tmp = symbols.toString();
-                    tmp = tmp.substring(1,tmp.length()-1);
-                    String[] symbol_list;
-                    if(tmp.contains(",")) {
-                        symbol_list = tmp.split(",");
-                    }
-                    else {
-                        symbol_list = new String[1];
-                        symbol_list[0] = tmp;
-                    }
+                    Subscribe new_sub = new Subscribe(subID, type, value, symbols.toString(), association, timewindow);
+                    map.put(subID, new_sub);
 
-                    for(int i=0; i<symbol_list.length; i++) {
-                        symbol_list[i] = symbol_list[i].substring(1,symbol_list[i].length()-1);
-                        Log.e("###############--",symbol_list[i]);
-                    }
-
-
-
-                    //Subscribe new_sub = new Subscribe(subID, type, value, symbols.toString(), association, timewindow);
-                    //map.put(subID, new_sub);
-
-                    //saveSubsMap(map);
-
-//                    HashMap<Integer, Subscribe> read_map = readSubsMap();
- //                   Subscribe get_sub = map.get(subID);
-  //                  Log.e("GET?", get_sub.getId()+"");
-
-
-
-
-
+                    saveSubsMap(map);
                 } catch (JSONException e) {
                     Log.e("JSON EXCEPTION", e.toString());
                 }

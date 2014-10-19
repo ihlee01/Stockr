@@ -89,16 +89,51 @@ public class GCMIntentService extends GCMBaseIntentService {
             e.printStackTrace();
         }
 
-        String msg = intent.getStringExtra("gcm");
+
         int subId = Integer.parseInt(intent.getStringExtra("subId"));
         double value = Double.parseDouble(intent.getStringExtra("value"));
         long timestamp = Long.parseLong(intent.getStringExtra("timestamp"));
 
-
+        Log.e("DATA?", subId+value+timestamp+"");
 
         HashMap<Integer, Subscribe> read_map = readSubsMap();
         Subscribe sub_obj = read_map.get(subId);
 
+        //Message for notification
+        String tmp = sub_obj.getSymbol();
+        tmp = tmp.substring(1,tmp.length()-1);
+        String[] symbol_list;
+        if(tmp.contains(",")) {
+            symbol_list = tmp.split(",");
+        }
+        else {
+            symbol_list = new String[1];
+            symbol_list[0] = tmp;
+        }
+
+        for(int i=0; i<symbol_list.length; i++) {
+            symbol_list[i] = symbol_list[i].substring(1,symbol_list[i].length()-1);
+        }
+        String msg = "";
+        if(symbol_list.length == 1) {
+
+            //Message 1
+            msg = "Alert for "+symbol_list[0];
+        }
+        else {
+            //Message 1
+            String symbols = "";
+            for(int i = 0 ; i < symbol_list.length; i++) {
+                symbols+= symbol_list[i];
+                symbols+= ", ";
+            }
+            symbols = symbols.substring(0, symbols.length()-2);
+
+            msg = "Alert for "+symbols;
+        }
+
+
+        //BoardItems are being stacked
         BoardItem bitem = new BoardItem(sub_obj.getSymbol(), sub_obj.getType(), value, timestamp, sub_obj.getAssociation(), sub_obj.getValue());
         messages.add(bitem);
 

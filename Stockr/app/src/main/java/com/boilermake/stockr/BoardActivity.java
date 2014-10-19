@@ -122,16 +122,49 @@ public class BoardActivity extends Activity {
             TextView message_1 = (TextView) rowView.findViewById(R.id.message_1);
             TextView message_2 = (TextView) rowView.findViewById(R.id.message_2);
 
-            //Set company image
+
+            String msg1 = null;
+            //Set the item components
             //Symbol array to string
-            String company_symbol = null;
-            company_image.setImageDrawable(company_image_map.get(company_symbol));
+            String tmp = symbol;
+            tmp = tmp.substring(1,tmp.length()-1);
+            String[] symbol_list;
+            if(tmp.contains(",")) {
+                symbol_list = tmp.split(",");
+            }
+            else {
+                symbol_list = new String[1];
+                symbol_list[0] = tmp;
+            }
+
+            for(int i=0; i<symbol_list.length; i++) {
+                symbol_list[i] = symbol_list[i].substring(1,symbol_list[i].length()-1);
+            }
+
+            if(symbol_list.length == 1) {
+                //image set
+                company_image.setImageDrawable(company_image_map.get(symbol_list[0]));
+
+                //Message 1
+                msg1 = "<b>Alert</b>: "+symbol_list[0]+" "+association+" than threshold("+original_value+")";
+            }
+            else {
+                //Mixed image set
+                company_image.setImageDrawable(getResources().getDrawable(R.drawable.mix));
+
+                //Message 1
+                String symbols = "";
+                for(int i = 0 ; i < symbol_list.length; i++) {
+                    symbols+= symbol_list[i];
+                    symbols+= ", ";
+                }
+                symbols = symbols.substring(0, symbols.length()-2);
+
+                msg1 = "<b>Alert</b>: "+symbols+" "+association+" than threshold("+original_value+")";
+            }
 
             //Timestamp
             timestamp_view.setText(timestamp);
-
-            //Message 1
-            String msg1 = "<b>Alert</b>: "+symbol+" "+association+" than threshold("+original_value+")";
 
 
             //Message 2
