@@ -1,9 +1,11 @@
 package com.boilermake.stockr;
 
+import java.io.Serializable;
+
 /**
  * Created by ilee on 10/18/14.
  */
-public class Subscribe {
+public class Subscribe implements Serializable {
     int id;
     int type;
     Double value;

@@ -345,7 +345,8 @@ public class SubsActivity extends Activity {
                     saveSubsMap(map);
 
                     HashMap<Integer, Subscribe> read_map = readSubsMap();
-                    map.get(subID);
+                    Subscribe get_sub = map.get(subID);
+                    Log.e("GET?", get_sub.getId()+"");
 
 
 
@@ -361,9 +362,12 @@ public class SubsActivity extends Activity {
     }
     public static void saveSubsMap(HashMap<Integer,Subscribe> o){
         File f = new File(path);
-        File store = new File(Environment.getExternalStorageDirectory() + "/IBMData");
-        if(!store.exists())
+        File store = new File(Environment.getExternalStorageDirectory() + "/SUBSdata");
+        if(!store.exists()){
             store.mkdirs();
+            Log.e("MKDIR", "TRUE");
+        }
+
         try{
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f)); //Select where you wish to save the file...
             oos.writeObject(o); // write the class as an 'object'
