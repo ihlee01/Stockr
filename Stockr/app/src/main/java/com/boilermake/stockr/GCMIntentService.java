@@ -36,6 +36,7 @@ public class GCMIntentService extends GCMBaseIntentService {
     private static boolean activityFound;
     static String path = Environment.getExternalStorageDirectory() + "/SUBSdata/subs.dat";
     HashMap<String, BoardItem> item_stack;
+    HashMap<String, ArrayList<BoardItem>> history_map;
 
 
     private static void generateNotification(Context context, String message) {
