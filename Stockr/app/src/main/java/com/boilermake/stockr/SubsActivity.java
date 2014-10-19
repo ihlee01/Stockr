@@ -243,114 +243,124 @@ public class SubsActivity extends Activity {
         });
 
         //3. Subscribe button
-        subs_butotn.setOnClickListener(new View.OnClickListener() {
+        subs_butotn.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
-                //Send data to server here...
-                Double value = 0.0;
-                int timewindow = 0;
-                int subID = mPrefs.getInt("subID", 0) + 1;
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        view.setBackgroundColor(view.getResources().getColor(R.color.green_pressed));
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        view.setBackgroundColor(view.getResources().getColor(R.color.start_green));
+                        //Send data to server here...
+                        Double value = 0.0;
+                        int timewindow = 0;
+                        int subID = mPrefs.getInt("subID", 0) + 1;
 
-                SharedPreferences.Editor editor = mPrefs.edit();
-                editor.putInt("subID", subID);
-                editor.commit();
-                //value
-                if (!input_value.getText().toString().equals("")) {
-                    value = Double.parseDouble(input_value.getText() + "");
-                } else {
-                    Log.e("HERE?", "TRUE");
-                    AlertDialog.Builder error = new AlertDialog.Builder(context);
-                    error.setTitle("ERROR");
-                    error.setMessage("Make sure to set the value.");
-                    error.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            return;
+                        SharedPreferences.Editor editor = mPrefs.edit();
+                        editor.putInt("subID", subID);
+                        editor.commit();
+                        //value
+                        if (!input_value.getText().toString().equals("")) {
+                            value = Double.parseDouble(input_value.getText() + "");
+                        } else {
+                            AlertDialog.Builder error = new AlertDialog.Builder(context);
+                            error.setTitle("ERROR");
+                            error.setMessage("Make sure to set the value.");
+                            error.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    return;
+                                }
+                            });
+                            error.show();
+                            break;
                         }
-                    });
-                    error.show();
-                    return;
-                }
 
-                //time
-                if (!input_time.getText().toString().equals("")) {
-                    timewindow = Integer.parseInt(input_time.getText() + "");
-                } else {
-                    if (type == 3) {
-                        AlertDialog.Builder error = new AlertDialog.Builder(context);
-                        error.setTitle("ERROR");
-                        error.setMessage("Make sure to set the time window.");
-                        error.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
+                        //time
+                        if (!input_time.getText().toString().equals("")) {
+                            timewindow = Integer.parseInt(input_time.getText() + "");
+                        } else {
+                            if (type == 3) {
+                                AlertDialog.Builder error = new AlertDialog.Builder(context);
+                                error.setTitle("ERROR");
+                                error.setMessage("Make sure to set the time window.");
+                                error.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
 
+                                    }
+                                });
+                                error.show();
+                                break;
+                            } else {
+                                timewindow = 0;
                             }
-                        });
-                        error.show();
-                        return;
-                    } else {
-                        timewindow = 0;
-                    }
-                }
-
-                //gcm
-                String gcm = mPrefs.getString("RegID", "");
-                if (company_symbols.size() == 0) {
-                    AlertDialog.Builder error = new AlertDialog.Builder(context);
-                    error.setTitle("ERROR");
-                    error.setMessage("Please, select at least one company.");
-                    error.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            return;
                         }
-                    });
-                    error.show();
-                    return;
-                }
+
+                        //gcm
+                        String gcm = mPrefs.getString("RegID", "");
+                        if (company_symbols.size() == 0) {
+                            AlertDialog.Builder error = new AlertDialog.Builder(context);
+                            error.setTitle("ERROR");
+                            error.setMessage("Please, select at least one company.");
+                            error.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    return;
+                                }
+                            });
+                            error.show();
+                            break;
+                        }
 
 
-                //Generate JSON Object
-                JSONObject json = new JSONObject();
+                        //Generate JSON Object
+                        JSONObject json = new JSONObject();
 
-                JSONArray symbols = new JSONArray();
-                if (type == 1 || type == 3) {
-                    //When it is instant or time -> put the latest one
-                    symbols.put(company_symbols.get(company_symbols.size() - 1));
-                    Log.e("Symbol added for type 1 or 3", company_symbols.get(company_symbols.size() - 1));
-                } else {
-                    //otherwise, put the whole list
-                    for (String symbol : company_symbols) {
-                        symbols.put(symbol);
-                        Log.e("Symbols added for type 2", symbol);
+                        JSONArray symbols = new JSONArray();
+                        if (type == 1 || type == 3) {
+                            //When it is instant or time -> put the latest one
+                            symbols.put(company_symbols.get(company_symbols.size() - 1));
+                            Log.e("Symbol added for type 1 or 3", company_symbols.get(company_symbols.size() - 1));
+                        } else {
+                            //otherwise, put the whole list
+                            for (String symbol : company_symbols) {
+                                symbols.put(symbol);
+                                Log.e("Symbols added for type 2", symbol);
+                            }
+                        }
+
+                        try {
+                            json.put("symbol", symbols);
+                            json.put("value", value);
+                            json.put("subId", subID);
+                            json.put("gcm", gcm);
+                            json.put("type", type);
+                            json.put("association", association);
+                            json.put("timewindow", timewindow);
+
+                            Log.e("JSON OBJ", json.toString());
+
+                            //Do the httpRequest
+                            doPost(json);
+
+                            HashMap<Integer, Subscribe> map = readSubsMap();
+
+
+                            Subscribe new_sub = new Subscribe(subID, type, value, symbols.toString(), association, timewindow);
+                            map.put(subID, new_sub);
+
+                            saveSubsMap(map);
+                        } catch (JSONException e) {
+                            Log.e("JSON EXCEPTION", e.toString());
+                        }
+
                     }
                 }
-
-                try {
-                    json.put("symbol", symbols);
-                    json.put("value", value);
-                    json.put("subId", subID);
-                    json.put("gcm", gcm);
-                    json.put("type", type);
-                    json.put("association", association);
-                    json.put("timewindow", timewindow);
-
-                    Log.e("JSON OBJ", json.toString());
-
-                    //Do the httpRequest
-                    doPost(json);
-
-                    HashMap<Integer, Subscribe> map = readSubsMap();
-
-
-                    Subscribe new_sub = new Subscribe(subID, type, value, symbols.toString(), association, timewindow);
-                    map.put(subID, new_sub);
-
-                    saveSubsMap(map);
-                } catch (JSONException e) {
-                    Log.e("JSON EXCEPTION", e.toString());
-                }
-
-
+                return false;
             }
         });
+
     }
     public static void saveSubsMap(HashMap<Integer,Subscribe> o){
         File f = new File(path);

@@ -55,6 +55,7 @@ public class BoardActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
+        overridePendingTransition(R.anim.in, R.anim.out);
 
         board_list = (ListView) findViewById(R.id.board_list);
         subs_button = (Button) findViewById(R.id.subscribe_start_button);
