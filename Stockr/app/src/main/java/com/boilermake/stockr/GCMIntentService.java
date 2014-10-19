@@ -35,8 +35,10 @@ public class GCMIntentService extends GCMBaseIntentService {
     private SharedPreferences mPrefs;
     private static boolean activityFound;
     static String path = Environment.getExternalStorageDirectory() + "/SUBSdata/subs.dat";
+    static String history_path = Environment.getExternalStorageDirectory() + "/SUBSdata/history.dat";
+
     HashMap<String, BoardItem> item_stack;
-    HashMap<String, ArrayList<BoardItem>> history_map;
+    HashMap<String, ArrayList<BoardItem>> history_map = new HashMap<String, ArrayList<BoardItem>>();
 
 
     private static void generateNotification(Context context, String message) {
@@ -159,7 +161,22 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         for(BoardItem item : messages) {
             item_stack.put(item.getSymbol(), item);
+/*
+            if(history_map.get(item.getSymbol()) == null) {
+                ArrayList<BoardItem> item_list = new ArrayList<BoardItem>();
+                item_list.add(item);
+                history_map.put(item.getSymbol(), item_list);
+            }
+            else {
+                //update
+                ArrayList<BoardItem> current_list = history_map.get(item.getSymbol());
+                current_list.add(item);
+                history_map.put(item.getSymbol(), current_list);
+            }
+*/
         }
+//        saveHistoryMap(history_map);
+
 
         messages = new ArrayList<BoardItem>();
         for (BoardItem item : item_stack.values()) {
@@ -217,7 +234,26 @@ public class GCMIntentService extends GCMBaseIntentService {
             Log.d("SUBS", "save error: " + e.getMessage());
         }
     }
+/*
+    public static void saveHistoryMap(HashMap<String, ArrayList<BoardItem>> o) {
+        File f = new File(history_path);
+        File store = new File(Environment.getExternalStorageDirectory() + "/SUBSdata");
+        if(!store.exists()) {
+            store.mkdirs();
+        }
 
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
+            oos.writeObject(o);
+            oos.flush();
+            oos.close();
+            Log.d("HISTORY", "Intent: Map Saved for History");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("HISTORY", "Save Error: " + e.getMessage());
+        }
+    }
+*/
     public static HashMap<Integer,Subscribe> readSubsMap(){
         try{
             File f = new File(path);
@@ -232,6 +268,23 @@ public class GCMIntentService extends GCMBaseIntentService {
             return new HashMap<Integer,Subscribe>();
         }
     }
+/*
+    public static HashMap<String, ArrayList<BoardItem>> readHistoryMap() {
+        try {
+            File f = new File(history_path);
+            Log.d("HISTORY", "Intent: Map read for history");
+            return (HashMap<String, ArrayList<BoardItem>>) new ObjectInputStream((new FileInputStream(f))).readObject();
+
+        }catch(FileNotFoundException e) {
+            Log.d("HISTORY", "FNE");
+            return new HashMap<String, ArrayList<BoardItem>>();
+        }catch(Exception ex) {
+            Log.d("HISTORY", "Null");
+            ex.printStackTrace();
+            return new HashMap<String, ArrayList<BoardItem>>();
+        }
+    }
+*/
     @Override
     protected void onError(Context context, String s) {
 
