@@ -56,12 +56,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         Intent notificationIntent = null;
 
-
-        if(activityFound) {
-            notificationIntent = new Intent(context, BoardActivity.class);
-        } else {
-            notificationIntent = new Intent(context, IntroActivity.class);
-        }
+        notificationIntent = new Intent(context, BoardActivity.class);
         //notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent intent = PendingIntent.getActivity(context,0,notificationIntent,0);
@@ -201,7 +196,7 @@ public class GCMIntentService extends GCMBaseIntentService {
             e.printStackTrace();
         }
 
-
+        /*
         ActivityManager activityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
 
@@ -209,7 +204,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         if(services.get(0).topActivity.getPackageName().toString().equalsIgnoreCase(this.getPackageName().toString())) {
             activityFound = true;
-        }
+        }*/
 
         generateNotification(context, msg);
     }
