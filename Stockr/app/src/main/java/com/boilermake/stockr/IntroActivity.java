@@ -66,7 +66,7 @@ public class IntroActivity extends Activity {
             finish();
 
             // Screen fade in & out effect
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            overridePendingTransition(android.R.anim.fade_in, R.anim.out);
         }
     };
 

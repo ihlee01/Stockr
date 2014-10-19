@@ -335,7 +335,7 @@ public class SubsActivity extends Activity {
                     Log.e("JSON OBJ", json.toString());
 
                     //Do the httpRequest
-                    //doPost(json);
+                    doPost(json);
 
                     HashMap<Integer, Subscribe> map = readSubsMap();
 
@@ -392,7 +392,7 @@ public class SubsActivity extends Activity {
         }catch(Exception ex){
             Log.d("SUBS","Null");
             ex.printStackTrace();
-            return null;
+            return new HashMap<Integer,Subscribe>();
         }
     }
     public void populateCompany() {
