@@ -35,16 +35,12 @@ import java.util.List;
 public class BoardActivity extends Activity {
 
     private SharedPreferences mPrefs;
-    //private List<DashboardItem> messages;
-    //private ArrayAdapter<DashboardItem> adapter;
-    private ListView listView;
-    private Context context;
+    private List<Subscribe> messages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
-        context = this;
     }
 
 
@@ -55,7 +51,7 @@ public class BoardActivity extends Activity {
 
         mPrefs = getSharedPreferences("data",0);
 
-        /*messages = null;
+        messages = null;
         ByteArrayInputStream byteInputStream;
         ObjectInputStream objectInputStream;
 
@@ -64,7 +60,7 @@ public class BoardActivity extends Activity {
             byte[] input = Base64.decode(encodedString, Base64.DEFAULT);
             byteInputStream = new ByteArrayInputStream(input);
             objectInputStream = new ObjectInputStream(byteInputStream);
-            messages = (ArrayList<DashboardItem>)objectInputStream.readObject();
+            messages = (ArrayList<Subscribe>)objectInputStream.readObject();
             objectInputStream.close();
 
         } catch(IOException e) {
@@ -73,42 +69,9 @@ public class BoardActivity extends Activity {
             e.printStackTrace();
         }
 
-        listView = (ListView)findViewById(R.id.dashBoardList);
-        listView.setAdapter(new DashboardListAdapter(context, R.layout.dashboard_item, messages));
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-        });
-*/
         return true;
     }
-/*
-    private class DashboardListAdapter extends ArrayAdapter<DashboardItem> {
-        private int resource;
-        private LayoutInflater inflater;
-        private Context context;
 
-        public DashboardListAdapter(Context context, int resource, List<DashboardItem> items) {
-            super(context,resource,items);
-            this.resource = resource;
-            this.inflater = LayoutInflater.from(context);
-            this.context = context;
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            convertView = (RelativeLayout)inflater.inflate(resource,null);
-            DashboardItem item = getItem(position);
-            TextView info = (TextView)convertView.findViewById(R.id.info);
-            info.setText(item.getInformation());
-
-            return convertView;
-        }
-    }
-
-*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will

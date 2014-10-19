@@ -59,17 +59,10 @@ public class GCMIntentService extends GCMBaseIntentService {
         vibrator.vibrate(1000);
 
         mPrefs = getSharedPreferences("data", 0);
-        String msg = intent.getStringExtra("gcm");
-
-        int subId = intent.getIntExtra("subId", 0);
-        double value = intent.getDoubleExtra("value", 0.0);
-        long tiestamp = intent.getLongExtra("timestamp", 0);
 
         //DB lookup -> ArrayList<Subscribe> -> sharePreference
 
-/*
-        //List<DashboardItem> messages = null;
-        List<DashboardItem> messages = null;
+        List<Subscribe> messages = null;
         ByteArrayInputStream byteInputStream;
         ObjectInputStream objectInputStream;
 
@@ -78,8 +71,7 @@ public class GCMIntentService extends GCMBaseIntentService {
             byte[] input = Base64.decode(encodedString, Base64.DEFAULT);
             byteInputStream = new ByteArrayInputStream(input);
             objectInputStream = new ObjectInputStream(byteInputStream);
-            //messages = (ArrayList<DashboardItem>)objectInputStream.readObject();
-            messages = (ArrayList<DashboardItem>)objectInputStream.readObject();
+            messages = (ArrayList<Subscribe>)objectInputStream.readObject();
             objectInputStream.close();
 
         } catch(IOException e) {
@@ -88,15 +80,14 @@ public class GCMIntentService extends GCMBaseIntentService {
             e.printStackTrace();
         }
 
-        String jsonArray = intent.getStringExtra("symbol");
-        double value = intent.getDoubleExtra("value", 0.0);
+        String msg = intent.getStringExtra("gcm");
         int subId = intent.getIntExtra("subId", 0);
-        int type = intent.getIntExtra("type", 0);
-        int association = intent.getIntExtra("association", 0);
-        int timewindow = intent.getIntExtra("timewindow", 0);
+        double value = intent.getDoubleExtra("value", 0.0);
+        long tiestamp = intent.getLongExtra("timestamp", 0);
 
 
-        messages.add(new DashboardItem(jsonArray,value,subId,msg,type,association,timewindow));
+        // messages.add
+
         SharedPreferences.Editor edit = mPrefs.edit();
 
         ObjectOutputStream objectOutputStream = null;
@@ -108,11 +99,10 @@ public class GCMIntentService extends GCMBaseIntentService {
             String encodedString = Base64.encodeToString(output, Base64.DEFAULT);
             edit.putString("messages",encodedString);
             edit.commit();
-            Log.e("################################","##################################");
         } catch(IOException e) {
             e.printStackTrace();
         }
-        */
+
         /*
         ActivityManager activityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);

@@ -34,7 +34,7 @@ public class IntroActivity extends Activity {
         setContentView(R.layout.activity_intro);
 
         mPrefs = getSharedPreferences("data",0); // initialize SharedPreferences
-        List<DashboardItem> messages = new ArrayList<DashboardItem>();
+        List<Subscribe> messages = new ArrayList<Subscribe>();
         SharedPreferences.Editor edit = mPrefs.edit();
 
         ObjectOutputStream objectOutputStream = null;
