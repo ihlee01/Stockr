@@ -18,7 +18,7 @@
     <RelativeLayout
         android:layout_toRightOf="@id/company_image"
         android:layout_width="wrap_content"
-        android:layout_height="65dp"
+        android:layout_height="60dp"
         android:paddingLeft="20dp"
         android:orientation="horizontal"
         android:gravity="center_vertical">
@@ -26,7 +26,7 @@
             android:id="@+id/company_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:text="Microsoft"/>
         <RadioButton

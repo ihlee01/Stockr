@@ -19,6 +19,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -45,11 +46,14 @@ public class SubsActivity extends Activity {
     Button lesser_button;
     Button subs_butotn;
     EditText input_value;
+    EditText input_time;
     ListView company_list;
     ArrayAdapter<Company> adapter;
     ArrayList<Company> companies;
+    ArrayList<String> company_symbols;
 
     LinearLayout company_layout;
+    LinearLayout time_layout;
 
 
     int type = 0;
@@ -60,7 +64,7 @@ public class SubsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subs);
         Animation slideup = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slideup);
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.subs_layout);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.subs_layout);
 
         layout.startAnimation(slideup);
         layout.setVisibility(View.VISIBLE);
@@ -72,22 +76,32 @@ public class SubsActivity extends Activity {
         greater_button = (Button) findViewById(R.id.greater_button);
         lesser_button = (Button) findViewById(R.id.lesser_button);
         input_value = (EditText) findViewById(R.id.input_value);
+        input_time = (EditText) findViewById(R.id.input_time);
         subs_butotn = (Button) findViewById(R.id.subs_button);
         company_list = (ListView) findViewById(R.id.company_list);
         company_layout = (LinearLayout) findViewById(R.id.company_layout);
+        time_layout = (LinearLayout) findViewById(R.id.time_layout);
+
+        company_symbols = new ArrayList<String>();
 
         //Populate companies
-        company_layout.setVisibility(View.GONE);
         companies = new ArrayList<Company>();
         if(companies.size() == 0) {
             populateCompany();
         }
-
+        generateList(company_list, R.layout.company_item_radio);
+        company_list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         //Event Listener
         input_value.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 input_value.setHint("");
+            }
+        });
+        input_time.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                input_time.setHint("");
             }
         });
 
@@ -106,8 +120,9 @@ public class SubsActivity extends Activity {
 
                 type = 1;
 
-                company_layout.setVisibility(View.VISIBLE);
                 generateList(company_list, R.layout.company_item_radio);
+                time_layout.setVisibility(View.GONE);
+                company_symbols.clear();
             }
         });
         spatial_button.setOnClickListener(new View.OnClickListener() {
@@ -124,8 +139,9 @@ public class SubsActivity extends Activity {
 
                 type = 2;
 
-                company_layout.setVisibility(View.VISIBLE);
                 generateList(company_list, R.layout.company_item_radio);
+                time_layout.setVisibility(View.GONE);
+                company_symbols.clear();
 
             }
         });
@@ -144,9 +160,9 @@ public class SubsActivity extends Activity {
 
                 type = 3;
 
-                company_layout.setVisibility(View.VISIBLE);
                 generateList(company_list, R.layout.company_item_radio);
-
+                time_layout.setVisibility(View.VISIBLE);
+                company_symbols.clear();
             }
         });
 
@@ -182,6 +198,12 @@ public class SubsActivity extends Activity {
             @Override
             public void onClick(View view) {
                 //Send data to server here...
+                Log.e("Type ID", type+"");
+                Log.e("Association", association+"");
+                Log.e("Value", input_value.getText()+"");
+                Log.e("TimeWindow", input_time.getText() +"");
+                Log.e("Symbols", company_symbols.toString());
+
 
 
             }
@@ -207,39 +229,10 @@ public class SubsActivity extends Activity {
         swing.setAbsListView(view);
         view.setAdapter(swing);
         view.setTextFilterEnabled(true);
-        setListViewHeightBasedOnChildren(view);
-        view.setAdapter(swing);
-    }
-    /**** Method for Setting the Height of the ListView dynamically.
-     **** Hack to fix the issue of not showing all the items of the ListView
-     **** when placed inside a ScrollView  ****/
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
-        View view = null;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            view = listAdapter.getView(i, view, listView);
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, WindowManager.LayoutParams.WRAP_CONTENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
-        listView.requestLayout();
     }
 
 
-
-
-
-    private class MyListAdapter extends ArrayAdapter<Company> implements Filterable {
+    private class MyListAdapter extends ArrayAdapter<Company> implements Filterable, Checkable {
         List<Company> list;
         List<Company> original_list;
         private CompanyFilter filter;
@@ -274,26 +267,49 @@ public class SubsActivity extends Activity {
             TextView company_name = (TextView)rowView.findViewById(R.id.company_name);
             final RadioButton company_radio = (RadioButton)rowView.findViewById(R.id.company_radio);
 
-           /* //Set company image
+            //Set company image
+
             Resources res = getResources();
             String image_name = curCompany.getName().toLowerCase();
             int resID = res.getIdentifier(image_name, "drawable", getPackageName());
             Drawable drawable = res.getDrawable(resID);
             company_image.setImageDrawable(drawable);
-*/
             company_name.setText(name);
 
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //check the radio button
-                    company_radio.setChecked(true);
-                    company_id = curCompany.getId();
+                    if(company_radio.isChecked())
+                    {
+                        company_radio.setChecked(false);
+                    }
+                    else {
+                        company_radio.setChecked(true);
+                        company_id = curCompany.getId();
+                        company_symbols.add(curCompany.getSymbol());
+                    }
                 }
             });
 
             return rowView;
         }
+
+        @Override
+        public void setChecked(boolean b) {
+
+        }
+
+        @Override
+        public boolean isChecked() {
+            return false;
+        }
+
+        @Override
+        public void toggle() {
+
+        }
+
         private class CompanyFilter extends Filter {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
