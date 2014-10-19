@@ -3,31 +3,60 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="10dp"
-    android:paddingTop="6dp"
-    android:paddingBottom="6dp"
-    android:paddingRight="6dp"
     android:background="@drawable/shape"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
     >
-    <ImageView
-        android:id="@+id/company_image"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/microsoft"
-        />
+
+
     <RelativeLayout
-        android:layout_toRightOf="@id/company_image"
+        android:id="@+id/line_1"
         android:layout_width="wrap_content"
-        android:layout_height="65dp"
-        android:paddingLeft="20dp"
+        android:layout_height="50dp"
         android:orientation="horizontal"
         android:gravity="center_vertical">
+        <ImageView
+            android:layout_alignParentLeft="true"
+            android:id="@+id/company_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/microsoft"
+            />
         <TextView
-            android:id="@+id/info"
+            android:id="@+id/timestamp"
+            android:layout_toRightOf="@+id/company_image"
+            android:layout_alignBottom="@id/company_image"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:textSize="18sp"
+            android:textColor="@color/grey"
+            android:text="2014-10-18"/>
+        </RelativeLayout>
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:id="@+id/line_2"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@+id/line_1"
+        android:layout_marginLeft="2dp"
+        android:layout_height="50dp">
+        <TextView
+            android:id="@+id/message_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:text="Test"/>
-    </RelativeLayout>
+            android:textSize="18sp"
+            android:layout_marginBottom="3dp"
+            android:text="Alert: MSFT greater than threshold(30)"/>
+        <TextView
+            android:id="@+id/message_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="Current price: 50"/>
+        </LinearLayout>
+
 </RelativeLayout>

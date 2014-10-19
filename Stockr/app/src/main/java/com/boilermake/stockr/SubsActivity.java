@@ -335,18 +335,20 @@ public class SubsActivity extends Activity {
                     Log.e("JSON OBJ", json.toString());
 
                     //Do the httpRequest
-                    doPost(json);
+    //                doPost(json);
 
                     HashMap<Integer, Subscribe> map = readSubsMap();
 
-                    Subscribe new_sub = new Subscribe(subID, type, value, symbols.toString(), association, timewindow);
-                    map.put(subID, new_sub);
+                    Log.e("SYMBOL", symbols.toString());
 
-                    saveSubsMap(map);
+                    //Subscribe new_sub = new Subscribe(subID, type, value, symbols.toString(), association, timewindow);
+                    //map.put(subID, new_sub);
 
-                    HashMap<Integer, Subscribe> read_map = readSubsMap();
-                    Subscribe get_sub = map.get(subID);
-                    Log.e("GET?", get_sub.getId()+"");
+                    //saveSubsMap(map);
+
+//                    HashMap<Integer, Subscribe> read_map = readSubsMap();
+ //                   Subscribe get_sub = map.get(subID);
+  //                  Log.e("GET?", get_sub.getId()+"");
 
 
 

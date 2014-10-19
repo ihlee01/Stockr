@@ -90,16 +90,16 @@ public class GCMIntentService extends GCMBaseIntentService {
         }
 
         String msg = intent.getStringExtra("gcm");
-        int subId = intent.getIntExtra("subId", 0);
-        double value = intent.getDoubleExtra("value", 0.0);
-        long timestamp = intent.getLongExtra("timestamp", 0);
+        int subId = Integer.parseInt(intent.getStringExtra("subId"));
+        double value = Double.parseDouble(intent.getStringExtra("value"));
+        long timestamp = Long.parseLong(intent.getStringExtra("timestamp"));
 
 
 
         HashMap<Integer, Subscribe> read_map = readSubsMap();
         Subscribe sub_obj = read_map.get(subId);
 
-        BoardItem bitem = new BoardItem(sub_obj.getSymbol(), sub_obj.getType(), value, timestamp, sub_obj.getAssociation());
+        BoardItem bitem = new BoardItem(sub_obj.getSymbol(), sub_obj.getType(), value, timestamp, sub_obj.getAssociation(), sub_obj.getValue());
         messages.add(bitem);
 
         SharedPreferences.Editor edit = mPrefs.edit();
