@@ -427,8 +427,9 @@ public class SubsActivity extends Activity {
 
 
     private void doPost(JSONObject json) {
+
         try {
-            Socket s = new Socket("10.184.100.240", 8001);
+            Socket s = new Socket("192.168.43.69", 8001);
             PrintWriter pw = new PrintWriter(s.getOutputStream(), true);
             pw.println(json.toString());
             s.close();

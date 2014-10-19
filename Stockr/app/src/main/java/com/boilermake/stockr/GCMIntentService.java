@@ -64,6 +64,8 @@ public class GCMIntentService extends GCMBaseIntentService {
         notification.setLatestEventInfo(context,title, message, intent);
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
+        Log.e("INTENT?", "intent get triggered");
+
         notificationManager.notify(0, notification);
 
 
@@ -103,6 +105,7 @@ public class GCMIntentService extends GCMBaseIntentService {
         long timestamp = Long.parseLong(intent.getStringExtra("timestamp"));
 
         Log.e("DATA?", subId+value+timestamp+"");
+        Log.e("SUb", subId+"");
 
         HashMap<Integer, Subscribe> read_map = readSubsMap();
         Subscribe sub_obj = read_map.get(subId);
@@ -142,7 +145,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 
 
-
+        Log.e("Sub_obj", sub_obj.getSymbol());
 
 
         //BoardItems are being stacked
@@ -156,6 +159,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         for(BoardItem item : messages) {
             item_stack.put(item.getSymbol(), item);
+            Log.e("MESS", item.getSymbol());
 /*
             if(history_map.get(item.getSymbol()) == null) {
                 ArrayList<BoardItem> item_list = new ArrayList<BoardItem>();
