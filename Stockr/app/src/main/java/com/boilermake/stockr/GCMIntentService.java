@@ -62,7 +62,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         //DB lookup -> ArrayList<Subscribe> -> sharePreference
 
-        List<Subscribe> messages = null;
+        List<BoardItem> messages = null;
         ByteArrayInputStream byteInputStream;
         ObjectInputStream objectInputStream;
 
@@ -71,7 +71,7 @@ public class GCMIntentService extends GCMBaseIntentService {
             byte[] input = Base64.decode(encodedString, Base64.DEFAULT);
             byteInputStream = new ByteArrayInputStream(input);
             objectInputStream = new ObjectInputStream(byteInputStream);
-            messages = (ArrayList<Subscribe>)objectInputStream.readObject();
+            messages = (ArrayList<BoardItem>)objectInputStream.readObject();
             objectInputStream.close();
 
         } catch(IOException e) {

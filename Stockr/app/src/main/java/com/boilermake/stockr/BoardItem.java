@@ -1,9 +1,11 @@
 package com.boilermake.stockr;
 
+import java.io.Serializable;
+
 /**
  * Created by ilee on 10/19/14.
  */
-public class BoardItem {
+public class BoardItem implements Serializable {
     String symbol;
     int type;
     double value;

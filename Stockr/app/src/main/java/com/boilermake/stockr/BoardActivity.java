@@ -35,7 +35,7 @@ import java.util.List;
 public class BoardActivity extends Activity {
 
     private SharedPreferences mPrefs;
-    private List<Subscribe> messages;
+    private List<BoardItem> messages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,7 @@ public class BoardActivity extends Activity {
             byte[] input = Base64.decode(encodedString, Base64.DEFAULT);
             byteInputStream = new ByteArrayInputStream(input);
             objectInputStream = new ObjectInputStream(byteInputStream);
-            messages = (ArrayList<Subscribe>)objectInputStream.readObject();
+            messages = (ArrayList<BoardItem>)objectInputStream.readObject();
             objectInputStream.close();
 
         } catch(IOException e) {
