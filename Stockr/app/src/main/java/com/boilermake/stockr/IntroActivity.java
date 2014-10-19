@@ -5,11 +5,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import com.google.android.gcm.GCMRegistrar;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 
 public class IntroActivity extends Activity {
@@ -25,6 +34,21 @@ public class IntroActivity extends Activity {
         setContentView(R.layout.activity_intro);
 
         mPrefs = getSharedPreferences("data",0); // initialize SharedPreferences
+        List<DashboardItem> messages = new ArrayList<DashboardItem>();
+        SharedPreferences.Editor edit = mPrefs.edit();
+
+        ObjectOutputStream objectOutputStream = null;
+        try {
+            ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+            objectOutputStream = new ObjectOutputStream(byteOutputStream);
+            objectOutputStream.writeObject(messages);
+            byte[] output = byteOutputStream.toByteArray();
+            String encodedString = Base64.encodeToString(output, Base64.DEFAULT);
+            edit.putString("messages",encodedString);
+            edit.commit();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
 
         registerGCM(); // register GCM and get registration ID
 
