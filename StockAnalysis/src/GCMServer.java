@@ -9,11 +9,11 @@ import com.google.android.gcm.server.Sender;
 
 public class GCMServer {
 
-	public static void sendMessage() throws IOException {
+	public static void sendMessage(int subId, double value, long timestamp, String registerID) throws IOException {
 		Sender sender = new Sender("AIzaSyD4Y6fCrmNvFWR59qzWrNwC10jEpja2J8w"); // API Key
-		String registerID = "APA91bExbq-NwhZaZCbJJXUvKuuHA_7HyRDd09ldtwzPM8nUdZKs6OXzRgkSxnld2GFjCIcBKMwCAxZMHtHb7tBOglnKtnpI9iCvuPhUiwu4P_f4psv4-fcPkDwRp8OUmGt67rCFu71YOCxVs38JgPFrs2EoJnU-PVP17KgPVDj2n9ofTiOald0";
 		
-		Message msg = new Message.Builder().addData("msg", "Push notify").addData("msg2", "Test").build(); // message from server
+		Message msg = new Message.Builder().addData("subId", ""+subId).addData("value", ""+value).
+				addData("timestamp", ""+timestamp).build(); // message from server
 		
 		List<String> list = new ArrayList<String>();
 		list.add(registerID);
@@ -24,7 +24,7 @@ public class GCMServer {
 			List<Result> resultList = multiResult.getResults();
 			
 			for(Result result : resultList) {
-				System.out.println(result.getMessageId());
+				System.out.println("GCM RESULTS: " + result.getMessageId());
 			}
 		}
 	}

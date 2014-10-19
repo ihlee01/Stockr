@@ -9,6 +9,9 @@
 	<classpathentry exported="true" kind="lib" path="/Users/Raggy/Downloads/StockAnalysis/lib/log4j-1.2.17.jar"/>
 	<classpathentry exported="true" kind="lib" path="/Users/Raggy/Downloads/json-lib-2.4-jdk15.jar"/>
 	<classpathentry exported="true" kind="lib" path="/Users/Raggy/Downloads/org.json-20120521.jar"/>
-	<classpathentry kind="lib" path="/Development/hack/Stockr/StockAnalysis/gcm-server.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Development/hack/Stockr/StockAnalysis/gcm-server.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Development/hack/Stockr/StockAnalysis/lib/blpapi-3.8.5.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Development/hack/Stockr/StockAnalysis/lib/blpapi-examples-3.8.5.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Development/hack/Stockr/StockAnalysis/json-simple-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

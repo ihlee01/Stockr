@@ -21,7 +21,10 @@ public class LocalSubscriptionListener extends Thread {
             while(true) {
                 // Wait for a client to connect. The method will block;
                 // when it returns the socket will be connected to the client
+            	System.out.println("Listening for local events");
                 Socket client = ss.accept();
+                System.out.println("Received Local Event Processing");
+                
                 BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 String line;
                 StringBuilder info = new StringBuilder();
@@ -30,12 +33,25 @@ public class LocalSubscriptionListener extends Thread {
                         break;
                     info.append(line);
                 }
-                JSONObject json = new JSONObject(info);
-                LocalEventProcess.Event e = new LocalEventProcess.Event(json.getDouble("value"), json.getString("gcm"), json.getInt("subId"));
+                System.out.println("JSON: " + info);
+                JSONObject json = new JSONObject(info.toString());
+                System.out.println(json.toString());
+                double val;
+                if(json.get("value") instanceof Integer){
+                	System.out.println("It is Int");
+                	int tmp = (Integer)json.get("value");
+                	val = (double)tmp;
+                }
+                else{
+                	System.out.println("It is Double");
+                	val = json.getDouble("value");
+                }
+                LocalEventProcess.Event e = new LocalEventProcess.Event(val, json.getString("gcm"), json.getInt("subId"));
                 if(json.getInt("association") == 1)
                 	LocalEventProcess.addGreater(e);
                 else
-                	LocalEventProcess.addLesser(e);             
+                	LocalEventProcess.addLesser(e); 
+                System.out.println("Added local event");
                 in.close();
                 } // Now loop again, waiting for the next connection
             }

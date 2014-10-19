@@ -38,21 +38,21 @@ public class LocalEventProcess {
 			if(price < e.val)
 				toSend.add(e);
 		}
+		if(toSend.size() == 0)
+			return;
 		Socket s;
 		try {
-			
 			s = new Socket("127.0.0.1", 9001);
 			PrintWriter chatWriter = new PrintWriter(s.getOutputStream(),true);
 			for(Event e: toSend){
+				System.out.println("Sending alert for " + e.subId + " \n" +  e.gcm + "\n" + price);
 				JSONObject json = new JSONObject();
-				json.put("value", e.val);
+				json.put("value", price);
 				json.put("subId", e.subId);
 				json.put("gcm", e.gcm);
 				chatWriter.println(json.toString());
 			}
 			s.close();
-		//	OutputStreamWriter out = new OutputStreamWriter(s.getOutputStream(), StandardCharsets.UTF_8);
-		 //   out.write(json.toString());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

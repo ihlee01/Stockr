@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
@@ -9,6 +10,7 @@ import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;
+import com.espertech.esper.client.PropertyAccessException;
 import com.espertech.esper.client.UpdateListener;
  
 public class exampleMain {
@@ -93,6 +95,15 @@ public class exampleMain {
     	
         public void update(EventBean[] newData, EventBean[] oldData) {
         	//System.out.println(newData[0].get("price"));
+        	try {
+				GCMServer.sendMessage(subId, (Double)newData[0].get("price"), System.currentTimeMillis(), gcm);
+			} catch (PropertyAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
            System.out.println("Event received New: " + newData[0].getUnderlying().toString());
         }
     }
@@ -101,7 +112,7 @@ public class exampleMain {
     	private String gcm;
     	private int subId;
     	private int size;
-    	private long lastTimeSpan;
+    	private long lastTimeSpan = -1;
     	private int count;
     	public SpatialCEPListener(String gcm, int subId, int size){
     		this.gcm = gcm;
@@ -111,17 +122,41 @@ public class exampleMain {
     	
         public void update(EventBean[] newData, EventBean[] oldData) {
         	//System.out.println(newData[0].get("price"));
-        	if(lastTimeSpan == -1){
-        		lastTimeSpan = (Long) newData[0].get("timestamp");
-        		count++;
-        		return;
+        	if(System.currentTimeMillis() - lastTimeSpan > 100000){
+        		count = 1;
+        		lastTimeSpan = ((Date) newData[0].get("timeStamp")).getTime();
         	}
-        	long timespan = (Long) newData[0].get("timestamp");
-        	if(timespan - lastTimeSpan < 60)
+        	else if(((Date) newData[0].get("timeStamp")).getTime() - lastTimeSpan < 60000){
         		count++;
+        	}
+        	/*
+        	
+        	System.out.println("Hit Spatial " + lastTimeSpan);
+        	lastTimeSpan = ((Date) newData[0].get("timeStamp")).getTime();
+        	if(lastTimeSpan == -1){
+        		lastTimeSpan = ((Date) newData[0].get("timeStamp")).getTime();
+        		count++;
+        		System.out.println("Set last time span");
+        		return;
+        	}else if(System.currentTimeMillis() - lastTimeSpan > 100000){
+        		lastTimeSpan = -1;
+        	}
+        	long timespan = ((Date) newData[0].get("timeStamp")).getTime();
+        	if(Math.abs(timespan - lastTimeSpan) < 60000)
+        		count++;*/
         	if(count == size){
         		lastTimeSpan = -1;
-        		//Send GCM Message	
+        		//Send GCM Message
+        		try {
+        			System.out.println("Sending GCM message for spatial");
+					GCMServer.sendMessage(subId, (Double)newData[0].get("price"), System.currentTimeMillis(), gcm);
+				} catch (PropertyAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
         	}
         	
            //System.out.println("Event received New: " + newData[0].getUnderlying().toString());
@@ -155,6 +190,7 @@ public class exampleMain {
     			else
     				query += "< " + value;
     		}
+    		query += " and count(*) >= " + timewindow;
     		EPStatement stmt = cep.getEPAdministrator().createEPL(query);
     		CEPListener c = new CEPListener(gcm, subId);
     		stmt.addListener(c);
@@ -172,6 +208,7 @@ public class exampleMain {
 			query += "> " + value;
 		else
 			query += "< " + value;
+		
 		EPStatement stmt = cep.getEPAdministrator().createEPL(query);
 		SpatialCEPListener c = new SpatialCEPListener(gcm, subId, symbol.size());
 		stmt.addListener(c);
