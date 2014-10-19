@@ -142,7 +142,9 @@
                     android:textSize="22sp"
                     android:gravity="center"
                     android:hint="Enter value here"
-                    android:inputType="number" />
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789."
+                    />
             </LinearLayout>
             <LinearLayout
                 android:visibility="gone"

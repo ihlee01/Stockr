@@ -61,6 +61,13 @@ public class GCMIntentService extends GCMBaseIntentService {
         mPrefs = getSharedPreferences("data", 0);
         String msg = intent.getStringExtra("gcm");
 
+        int subId = intent.getIntExtra("subId", 0);
+        double value = intent.getDoubleExtra("value", 0.0);
+        long tiestamp = intent.getLongExtra("timestamp", 0);
+
+        //DB lookup -> ArrayList<Subscribe> -> sharePreference
+
+/*
         //List<DashboardItem> messages = null;
         List<DashboardItem> messages = null;
         ByteArrayInputStream byteInputStream;
@@ -105,6 +112,7 @@ public class GCMIntentService extends GCMBaseIntentService {
         } catch(IOException e) {
             e.printStackTrace();
         }
+        */
         /*
         ActivityManager activityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);

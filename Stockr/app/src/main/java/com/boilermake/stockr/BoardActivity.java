@@ -35,8 +35,8 @@ import java.util.List;
 public class BoardActivity extends Activity {
 
     private SharedPreferences mPrefs;
-    private List<DashboardItem> messages;
-    private ArrayAdapter<DashboardItem> adapter;
+    //private List<DashboardItem> messages;
+    //private ArrayAdapter<DashboardItem> adapter;
     private ListView listView;
     private Context context;
 
@@ -55,7 +55,7 @@ public class BoardActivity extends Activity {
 
         mPrefs = getSharedPreferences("data",0);
 
-        messages = null;
+        /*messages = null;
         ByteArrayInputStream byteInputStream;
         ObjectInputStream objectInputStream;
 
@@ -82,10 +82,10 @@ public class BoardActivity extends Activity {
 
             }
         });
-
+*/
         return true;
     }
-
+/*
     private class DashboardListAdapter extends ArrayAdapter<DashboardItem> {
         private int resource;
         private LayoutInflater inflater;
@@ -108,7 +108,7 @@ public class BoardActivity extends Activity {
         }
     }
 
-
+*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will

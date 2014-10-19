@@ -1,12 +1,17 @@
 package com.boilermake.stockr;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,7 +38,31 @@ import android.widget.TextView;
 
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -55,10 +84,19 @@ public class SubsActivity extends Activity {
     LinearLayout company_layout;
     LinearLayout time_layout;
 
+    SharedPreferences mPrefs;
 
-    int type = 0;
-    int association = 0;
-    String company_id = "";
+
+    int type = 1; // 1 by default
+    int association = 1; // 1 by default
+
+    final Context context = this;
+
+    static String path = Environment.getExternalStorageDirectory() + "/SUBSdata/subs.dat";
+
+
+    MySQLiteHelper db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +106,15 @@ public class SubsActivity extends Activity {
 
         layout.startAnimation(slideup);
         layout.setVisibility(View.VISIBLE);
+
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT > 8) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
+        db = new MySQLiteHelper(this);
 
         //Components initializing
         instant_button = (Button) findViewById(R.id.instant_button);
@@ -84,9 +131,11 @@ public class SubsActivity extends Activity {
 
         company_symbols = new ArrayList<String>();
 
+        mPrefs = getSharedPreferences("data", 0); // initialize SharedPreferences
+
         //Populate companies
         companies = new ArrayList<Company>();
-        if(companies.size() == 0) {
+        if (companies.size() == 0) {
             populateCompany();
         }
         generateList(company_list, R.layout.company_item_radio);
@@ -198,18 +247,150 @@ public class SubsActivity extends Activity {
             @Override
             public void onClick(View view) {
                 //Send data to server here...
-                Log.e("Type ID", type+"");
-                Log.e("Association", association+"");
-                Log.e("Value", input_value.getText()+"");
-                Log.e("TimeWindow", input_time.getText() +"");
-                Log.e("Symbols", company_symbols.toString());
+                Double value = 0.0;
+                int timewindow = 0;
+                int subID = mPrefs.getInt("subID", 0) + 1;
 
+                SharedPreferences.Editor editor = mPrefs.edit();
+                editor.putInt("subID", subID);
+                editor.commit();
+                //value
+                if (!input_value.getText().toString().equals("")) {
+                    value = Double.parseDouble(input_value.getText() + "");
+                } else {
+                    Log.e("HERE?", "TRUE");
+                    AlertDialog.Builder error = new AlertDialog.Builder(context);
+                    error.setTitle("ERROR");
+                    error.setMessage("Make sure to set the value.");
+                    error.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            return;
+                        }
+                    });
+                    error.show();
+                    return;
+                }
+
+                //time
+                if (!input_time.getText().toString().equals("")) {
+                    timewindow = Integer.parseInt(input_time.getText() + "");
+                } else {
+                    if (type == 3) {
+                        AlertDialog.Builder error = new AlertDialog.Builder(context);
+                        error.setTitle("ERROR");
+                        error.setMessage("Make sure to set the time window.");
+                        error.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                            }
+                        });
+                        error.show();
+                        return;
+                    } else {
+                        timewindow = 0;
+                    }
+                }
+
+                //gcm
+                String gcm = mPrefs.getString("RegID", "");
+                if (company_symbols.size() == 0) {
+                    AlertDialog.Builder error = new AlertDialog.Builder(context);
+                    error.setTitle("ERROR");
+                    error.setMessage("Please, select at least one company.");
+                    error.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            return;
+                        }
+                    });
+                    error.show();
+                    return;
+                }
+
+
+                //Generate JSON Object
+                JSONObject json = new JSONObject();
+
+                JSONArray symbols = new JSONArray();
+                if (type == 1 || type == 3) {
+                    //When it is instant or time -> put the latest one
+                    symbols.put(company_symbols.get(company_symbols.size() - 1));
+                    Log.e("Symbol added for type 1 or 3", company_symbols.get(company_symbols.size() - 1));
+                } else {
+                    //otherwise, put the whole list
+                    for (String symbol : company_symbols) {
+                        symbols.put(symbol);
+                        Log.e("Symbols added for type 2", symbol);
+                    }
+                }
+
+                try {
+                    json.put("symbol", symbols);
+                    json.put("value", value);
+                    json.put("subId", subID);
+                    json.put("gcm", gcm);
+                    json.put("type", type);
+                    json.put("association", association);
+                    json.put("timewindow", timewindow);
+
+                    Log.e("JSON OBJ", json.toString());
+
+                    //Do the httpRequest
+                    //doPost(json);
+
+                    HashMap<Integer, Subscribe> map = readSubsMap();
+
+                    Subscribe new_sub = new Subscribe(subID, type, value, symbols.toString(), association, timewindow);
+                    map.put(subID, new_sub);
+
+                    saveSubsMap(map);
+
+                    HashMap<Integer, Subscribe> read_map = readSubsMap();
+                    map.get(subID);
+
+
+
+
+
+                } catch (JSONException e) {
+                    Log.e("JSON EXCEPTION", e.toString());
+                }
 
 
             }
         });
     }
+    public static void saveSubsMap(HashMap<Integer,Subscribe> o){
+        File f = new File(path);
+        File store = new File(Environment.getExternalStorageDirectory() + "/IBMData");
+        if(!store.exists())
+            store.mkdirs();
+        try{
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f)); //Select where you wish to save the file...
+            oos.writeObject(o); // write the class as an 'object'
+            oos.flush(); // flush the stream to insure all of the information was written to 'save.bin'
+            oos.close();// close the stream
+            Log.d("SUBS", "Intent: Map saved");
 
+        }catch(Exception e){
+            e.printStackTrace();
+            Log.d("SUBS", "save error: " + e.getMessage());
+        }
+    }
+
+    public static HashMap<Integer,Subscribe> readSubsMap(){
+        try{
+            File f = new File(path);
+            Log.d("SUBS", "Intent: Map read");
+            return (HashMap<Integer,Subscribe>) new ObjectInputStream(new FileInputStream(f)).readObject();
+        }catch(FileNotFoundException e){
+            Log.d("SUBS","FNE");
+            return new HashMap<Integer,Subscribe>();
+        }catch(Exception ex){
+            Log.d("SUBS","Null");
+            ex.printStackTrace();
+            return null;
+        }
+    }
     public void populateCompany() {
         companies.add(new Company("1", "Microsoft", "MSFT"));
         companies.add(new Company("2", "IBM", "IBM"));
@@ -222,6 +403,7 @@ public class SubsActivity extends Activity {
         companies.add(new Company("9", "LinkedIn", "LNKD"));
         companies.add(new Company("10", "Twitter", "TWTR"));
     }
+
     private void generateList(ListView view, int layout) {
         //defaultView.setVisibility(View.GONE);
         adapter = new MyListAdapter(getBaseContext(), layout, companies);
@@ -232,11 +414,26 @@ public class SubsActivity extends Activity {
     }
 
 
+    private void doPost(JSONObject json) {
+        try {
+            Socket s = new Socket("10.184.100.240", 8001);
+            PrintWriter pw = new PrintWriter(s.getOutputStream(), true);
+            pw.println(json.toString());
+            s.close();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+
     private class MyListAdapter extends ArrayAdapter<Company> implements Filterable, Checkable {
         List<Company> list;
         List<Company> original_list;
         private CompanyFilter filter;
         private int resource;
+
         public MyListAdapter(Context context, int resourceId, List<Company> list) {
             super(context, resourceId, list);
             this.list = list;
@@ -253,19 +450,21 @@ public class SubsActivity extends Activity {
         }
 
         @Override
-        public int getCount() { return list.size(); }
+        public int getCount() {
+            return list.size();
+        }
 
         public View getView(int position, View convertView, ViewGroup parent) {
             View rowView = convertView;
-            if(rowView == null) {
-                LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            if (rowView == null) {
+                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 rowView = inflater.inflate(resource, parent, false);
             }
             final Company curCompany = list.get(position);
             String name = curCompany.getName();
-            ImageView company_image = (ImageView)rowView.findViewById(R.id.company_image);
-            TextView company_name = (TextView)rowView.findViewById(R.id.company_name);
-            final RadioButton company_radio = (RadioButton)rowView.findViewById(R.id.company_radio);
+            ImageView company_image = (ImageView) rowView.findViewById(R.id.company_image);
+            TextView company_name = (TextView) rowView.findViewById(R.id.company_name);
+            final RadioButton company_radio = (RadioButton) rowView.findViewById(R.id.company_radio);
 
             //Set company image
 
@@ -280,17 +479,27 @@ public class SubsActivity extends Activity {
                 @Override
                 public void onClick(View view) {
                     //check the radio button
-                    if(company_radio.isChecked())
-                    {
+                    if (company_radio.isChecked()) {
                         company_radio.setChecked(false);
-                    }
-                    else {
+                        company_symbols.remove(curCompany.getSymbol());
+                    } else {
                         company_radio.setChecked(true);
-                        company_id = curCompany.getId();
-                        company_symbols.add(curCompany.getSymbol());
+                        Log.e("SYMBOL", curCompany.getSymbol());
+                        if (type != 0) {
+                            if (type == 1 || type == 3) {
+                                company_symbols.add(curCompany.getSymbol());
+                            } else {
+                                if (!company_symbols.contains(curCompany.getSymbol())) {
+                                    company_symbols.add(curCompany.getSymbol());
+                                }
+                            }
+                        }
+
                     }
                 }
             });
+            company_radio.setClickable(false);
+
 
             return rowView;
         }
@@ -315,14 +524,13 @@ public class SubsActivity extends Activity {
             protected FilterResults performFiltering(CharSequence charSequence) {
                 FilterResults results = new FilterResults();
                 charSequence = charSequence.toString().toLowerCase();
-                if(charSequence == null || charSequence.length() == 0) {
+                if (charSequence == null || charSequence.length() == 0) {
                     results.values = original_list;
                     results.count = original_list.size();
-                }
-                else {
+                } else {
                     List<Company> result = new ArrayList<Company>();
-                    for(Company company : original_list) {
-                        if(company.getName().toLowerCase().contains(charSequence)) {
+                    for (Company company : original_list) {
+                        if (company.getName().toLowerCase().contains(charSequence)) {
                             result.add(company);
                         }
                     }
@@ -334,13 +542,12 @@ public class SubsActivity extends Activity {
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                if(filterResults.count == 0) {
+                if (filterResults.count == 0) {
                     list = original_list;
                     notifyDataSetInvalidated();
                     //defaultView.setVisibility(View.VISIBLE);
                     company_list.setVisibility(View.GONE);
-                }
-                else {
+                } else {
                     //defaultView.setVisibility(View.GONE);
                     company_list.setVisibility(View.VISIBLE);
                     list = (List<Company>) filterResults.values;
@@ -349,6 +556,7 @@ public class SubsActivity extends Activity {
             }
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
