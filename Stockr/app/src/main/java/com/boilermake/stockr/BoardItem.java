@@ -30,7 +30,7 @@ public class BoardItem implements Serializable {
     }
 
     public String getType() {
-        return types[type];
+        return types[type-1];
     }
 
     public double getValue() {
