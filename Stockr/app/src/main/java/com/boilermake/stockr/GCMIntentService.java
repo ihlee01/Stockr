@@ -33,7 +33,7 @@ import java.util.List;
 public class GCMIntentService extends GCMBaseIntentService {
 
     private SharedPreferences mPrefs;
-    private boolean activityFound;
+    private static boolean activityFound;
     static String path = Environment.getExternalStorageDirectory() + "/SUBSdata/subs.dat";
     HashMap<String, BoardItem> item_stack;
 
@@ -51,7 +51,13 @@ public class GCMIntentService extends GCMBaseIntentService {
         String title = context.getString(R.string.app_name);
 
 
-        Intent notificationIntent = new Intent(context, IntroActivity.class);
+        Intent notificationIntent = null;
+
+        if(activityFound) {
+            notificationIntent = new Intent(context, BoardActivity.class);
+        } else {
+            notificationIntent = new Intent(context, IntroActivity.class);
+        }
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent intent = PendingIntent.getActivity(context,0,notificationIntent,0);
 
@@ -174,7 +180,7 @@ public class GCMIntentService extends GCMBaseIntentService {
             e.printStackTrace();
         }
 
-        /*
+
         ActivityManager activityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
 
@@ -182,7 +188,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         if(services.get(0).topActivity.getPackageName().toString().equalsIgnoreCase(this.getPackageName().toString())) {
             activityFound = true;
-        }*/
+        }
 
         generateNotification(context, msg);
     }
