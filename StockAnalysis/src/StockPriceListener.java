@@ -19,15 +19,17 @@ public class StockPriceListener extends Thread{
 			e.printStackTrace();
 		}
 		while(true){
-			System.out.println("Listening");
+			System.out.println("Listening for non Outliers/Alerts");
 			try{
 				client = listener.accept();
 				reader = new BufferedReader(new InputStreamReader(client.getInputStream())); 
 				msg = reader.readLine();
 				System.out.println("Recv Msg: " + msg);
 				JSONObject json = new JSONObject(msg);
-				exampleMain.Tick t = new exampleMain.Tick((String)json.get("symbol"), (Double)json.get("price"), (Long)json.get("timestamp"));
-				exampleMain.addEvent(t);
+				//Received an alert to be sent using GCM
+				GCMServer.sendMessage();
+				//exampleMain.Tick t = new exampleMain.Tick((String)json.get("symbol"), (Double)json.get("value"), (Long)json.get("timestamp"));
+				//exampleMain.addEvent(t);
 			}catch(Exception e){
 				e.printStackTrace();
 			}

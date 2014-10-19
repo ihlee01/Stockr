@@ -9,7 +9,7 @@ import com.google.android.gcm.server.Sender;
 
 public class GCMServer {
 
-	public void sendMessage() throws IOException {
+	public static void sendMessage() throws IOException {
 		Sender sender = new Sender("AIzaSyD4Y6fCrmNvFWR59qzWrNwC10jEpja2J8w"); // API Key
 		String registerID = "APA91bExbq-NwhZaZCbJJXUvKuuHA_7HyRDd09ldtwzPM8nUdZKs6OXzRgkSxnld2GFjCIcBKMwCAxZMHtHb7tBOglnKtnpI9iCvuPhUiwu4P_f4psv4-fcPkDwRp8OUmGt67rCFu71YOCxVs38JgPFrs2EoJnU-PVP17KgPVDj2n9ofTiOald0";
 		
@@ -27,11 +27,6 @@ public class GCMServer {
 				System.out.println(result.getMessageId());
 			}
 		}
-	}
-	
-	public static void main(String[] args) throws Exception {
-		GCMServer server = new GCMServer();
-		server.sendMessage();
 	}
 	
 }

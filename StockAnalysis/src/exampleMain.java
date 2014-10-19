@@ -31,7 +31,7 @@ public class exampleMain {
 		events.clear();
 	}
 	
-	public static void processEvents(ArrayList<Tick> events){
+	public static void processEvents(){
 		isProcessing = true;
     	for(Tick tick: events){
     		cep.getEPRuntime().sendEvent(tick);
@@ -101,7 +101,7 @@ public class exampleMain {
     	private String gcm;
     	private int subId;
     	private int size;
-    	private int lastTimeSpan;
+    	private long lastTimeSpan;
     	private int count;
     	public SpatialCEPListener(String gcm, int subId, int size){
     		this.gcm = gcm;
@@ -111,7 +111,20 @@ public class exampleMain {
     	
         public void update(EventBean[] newData, EventBean[] oldData) {
         	//System.out.println(newData[0].get("price"));
-           System.out.println("Event received New: " + newData[0].getUnderlying().toString());
+        	if(lastTimeSpan == -1){
+        		lastTimeSpan = (Long) newData[0].get("timestamp");
+        		count++;
+        		return;
+        	}
+        	long timespan = (Long) newData[0].get("timestamp");
+        	if(timespan - lastTimeSpan < 60)
+        		count++;
+        	if(count == size){
+        		lastTimeSpan = -1;
+        		//Send GCM Message	
+        	}
+        	
+           //System.out.println("Event received New: " + newData[0].getUnderlying().toString());
         }
     }
     
@@ -145,13 +158,14 @@ public class exampleMain {
     		EPStatement stmt = cep.getEPAdministrator().createEPL(query);
     		CEPListener c = new CEPListener(gcm, subId);
     		stmt.addListener(c);
+    		System.out.println("Created Query for Temporal: " + query);
     		return query;
     }
     
-    public static String createStreamQuery(String[] symbol, double value, int association, String gcm, int subId){
-		String symbols = "symbol='" + symbol[0] + "'";
-		for(int i=1; i<symbol.length; i++)
-			symbols += " or symbol='" + symbol[i] + "'";
+    public static String createStreamQuery(ArrayList<String> symbol, double value, int association, String gcm, int subId){
+		String symbols = "symbol='" + symbol.get(0) + "'";
+		for(int i=1; i<symbol.size(); i++)
+			symbols += " or symbol='" + symbol.get(i) + "'";
 		String query;
 		query = "select * from StockTick(" + symbols + ") having price ";
 		if(association == 1)
@@ -159,8 +173,9 @@ public class exampleMain {
 		else
 			query += "< " + value;
 		EPStatement stmt = cep.getEPAdministrator().createEPL(query);
-		SpatialCEPListener c = new SpatialCEPListener(gcm, subId, symbol.length);
+		SpatialCEPListener c = new SpatialCEPListener(gcm, subId, symbol.size());
 		stmt.addListener(c);
+		System.out.println("Created Query for Spatial: " + query);
 		return query;
     }
     /*

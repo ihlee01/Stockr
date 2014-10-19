@@ -18,6 +18,7 @@ import java.lang.StringBuilder;
 import java.util.*;
 import org.json.*;
 
+
 public class Server implements Runnable{
     Socket client;
     public Server(Socket sck) {
@@ -67,7 +68,7 @@ public class Server implements Runnable{
         try {
             JSONObject json = new JSONObject(str);
             
-            JSONArray arr = (JSONArray) json.getJSONArray("Symbol");
+            JSONArray arr = (JSONArray) json.getJSONArray("symbol");
             symbs = new ArrayList<String>();
 
             for(int i = 0; i < arr.length(); i++) {
@@ -89,15 +90,12 @@ public class Server implements Runnable{
     }
     
 
-    public static void main(String args[]) {
+    public static void start() {
         try {
             // Get the port to listen on
-            if(args.length != 1) {
-                System.err.println("Usage: java Server <port > 1023>");
-                return;
-            }
+            
 
-            int port = Integer.parseInt(args[0]);
+            int port = 8001;
             // Create a ServerSocket to listen on that port.
             ServerSocket ss = new ServerSocket(port);
             // Now enter an infinite loop, waiting for & handling connections.
@@ -130,7 +128,7 @@ public class Server implements Runnable{
                     info.append(line);
                 }
 
-                System.out.println(client.isConnected());
+               // System.out.println(client.isConnected());
 
                 StockObj stk = parseJsonString(info.toString());
                 System.out.print("Type:" + stk.getType() + " timewindow:" + stk.getTimeWindow() 
@@ -140,13 +138,42 @@ public class Server implements Runnable{
                     System.out.print(str + " ");
                 // Close socket, breaking the connection to the client, and
                 // closing the inputstreams
-                if(stk.getSymbols().size() == 1)
-                	exampleMain.createStreamQuery(stk.getSymbol(0), stk.getType(), stk.getValue(),stk.getTimeWindow(), 
+                if(stk.getSymbols().size() == 1){
+                	if(stk.getType() == 2)
+                		exampleMain.createStreamQuery(stk.getSymbol(0), stk.getType(), stk.getValue(),stk.getTimeWindow(), 
+                			stk.getAssociation(), stk.getGcm(), stk.getSubId());                		
+                	else{
+                		sendData(stk);
+                	}
+                }
+                else{
+                	exampleMain.createStreamQuery(stk.getSymbols(), stk.getValue(), 
                 			stk.getAssociation(), stk.getGcm(), stk.getSubId());
+                }
                 in.close(); // Close the input stream
                 client.close(); // Close the socket itself
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        private void sendData(StockObj stk){
+        	Socket s;
+    		try {
+    			
+    			s = new Socket("127.0.0.1", 8080);//Set this port based on symbol
+    			PrintWriter chatWriter = new PrintWriter(s.getOutputStream(),true);
+    			JSONObject json = new JSONObject();
+    			json.put("gcm", stk.getGcm());
+    			json.put("subId", stk.getSubId());
+    			json.put("value", stk.getValue());
+    			json.put("association", stk.getAssociation());
+    			chatWriter.println(json.toString());
+    			s.close();
+    		//	OutputStreamWriter out = new OutputStreamWriter(s.getOutputStream(), StandardCharsets.UTF_8);
+    		 //   out.write(json.toString());
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
         }
 }
