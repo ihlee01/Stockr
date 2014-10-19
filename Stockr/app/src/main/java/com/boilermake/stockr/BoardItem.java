@@ -37,7 +37,7 @@ public class BoardItem implements Serializable {
         return value;
     }
     public String getAssociation() {
-        return associations[association];
+        return associations[association-1];
     }
 
     public long getTimestamp() {
