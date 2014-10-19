@@ -35,6 +35,7 @@ public class GCMIntentService extends GCMBaseIntentService {
     private SharedPreferences mPrefs;
     private boolean activityFound;
     static String path = Environment.getExternalStorageDirectory() + "/SUBSdata/subs.dat";
+    HashMap<String, BoardItem> item_stack;
 
 
     private static void generateNotification(Context context, String message) {
@@ -133,9 +134,30 @@ public class GCMIntentService extends GCMBaseIntentService {
         }
 
 
+
+
+
+
         //BoardItems are being stacked
         BoardItem bitem = new BoardItem(sub_obj.getSymbol(), sub_obj.getType(), value, timestamp, sub_obj.getAssociation(), sub_obj.getValue());
         messages.add(bitem);
+
+
+        //HashMap to replace
+
+        item_stack = new HashMap<String, BoardItem>();
+
+        for(BoardItem item : messages) {
+            item_stack.put(item.getSymbol(), item);
+        }
+
+        messages = new ArrayList<BoardItem>();
+        for (BoardItem item : item_stack.values()) {
+            messages.add(item);
+        }
+
+
+
 
         SharedPreferences.Editor edit = mPrefs.edit();
 

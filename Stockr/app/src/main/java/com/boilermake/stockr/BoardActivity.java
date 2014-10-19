@@ -24,9 +24,9 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
 import org.json.JSONArray;
 
@@ -48,6 +48,8 @@ public class BoardActivity extends Activity {
     HashMap<String, Drawable> company_image_map = new HashMap<String, Drawable>();
     Button subs_button;
 
+    HashMap<String, BoardItem> item_stack;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,42 @@ public class BoardActivity extends Activity {
 
         populateMap();
 
+        mPrefs = getSharedPreferences("data",0);
+
+        messages = null;
+        ByteArrayInputStream byteInputStream;
+        ObjectInputStream objectInputStream;
+
+        try {
+            String encodedString = mPrefs.getString("messages", null);
+            byte[] input = Base64.decode(encodedString, Base64.DEFAULT);
+            byteInputStream = new ByteArrayInputStream(input);
+            objectInputStream = new ObjectInputStream(byteInputStream);
+            messages = (ArrayList<BoardItem>)objectInputStream.readObject();
+            objectInputStream.close();
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        } catch(ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if(messages.size() > 0) {
+            generateList(board_list, R.layout.dashboard_item);
+        }
+        else {
+            Intent i = new Intent(BoardActivity.this, SubsActivity.class);
+            startActivity(i);
+        }
+
+
+    }
+    private void generateList(ListView view, int layout) {
+        adapter = new MyListAdapter(getBaseContext(), layout, messages);
+        SwingBottomInAnimationAdapter swing = new SwingBottomInAnimationAdapter(adapter);
+        swing.setAbsListView(view);
+        view.setAdapter(swing);
+        view.setTextFilterEnabled(true);
     }
 
     public void populateMap() {
@@ -158,7 +196,7 @@ public class BoardActivity extends Activity {
                     symbols+= symbol_list[i];
                     symbols+= ", ";
                 }
-                symbols = symbols.substring(0, symbols.length()-2);
+                symbols = symbols.substring(0, symbols.length() - 2);
 
                 msg1 = "<b>Alert</b>: "+symbols+" "+association+" than threshold("+original_value+")";
             }
@@ -186,25 +224,7 @@ public class BoardActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.board, menu);
 
-        mPrefs = getSharedPreferences("data",0);
 
-        messages = null;
-        ByteArrayInputStream byteInputStream;
-        ObjectInputStream objectInputStream;
-
-        try {
-            String encodedString = mPrefs.getString("messages", null);
-            byte[] input = Base64.decode(encodedString, Base64.DEFAULT);
-            byteInputStream = new ByteArrayInputStream(input);
-            objectInputStream = new ObjectInputStream(byteInputStream);
-            messages = (ArrayList<BoardItem>)objectInputStream.readObject();
-            objectInputStream.close();
-
-        } catch(IOException e) {
-            e.printStackTrace();
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
-        }
 
         return true;
     }
