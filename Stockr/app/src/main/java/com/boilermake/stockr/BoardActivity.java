@@ -52,6 +52,72 @@ public class BoardActivity extends Activity {
 
 
     @Override
+    protected void onResume() {
+        overridePendingTransition(R.anim.in, R.anim.out);
+
+        board_list = (ListView) findViewById(R.id.board_list);
+        subs_button = (Button) findViewById(R.id.subscribe_start_button);
+        subs_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(BoardActivity.this, SubsActivity.class);
+                startActivity(i);
+            }
+        });
+
+        populateMap();
+
+        mPrefs = getSharedPreferences("data",0);
+
+        messages = null;
+        ByteArrayInputStream byteInputStream;
+        ObjectInputStream objectInputStream;
+
+        try {
+            String encodedString = mPrefs.getString("messages", null);
+            byte[] input = Base64.decode(encodedString, Base64.DEFAULT);
+            byteInputStream = new ByteArrayInputStream(input);
+            objectInputStream = new ObjectInputStream(byteInputStream);
+            messages = (ArrayList<BoardItem>)objectInputStream.readObject();
+            objectInputStream.close();
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        } catch(ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Log.e("#######################---------",messages.size()+"");
+
+        if(messages.size() > 0) {
+            generateList(board_list, R.layout.dashboard_item);
+        }
+        else {
+            Intent i = new Intent(BoardActivity.this, SubsActivity.class);
+            startActivity(i);
+        }
+        super.onResume();
+    }
+/*
+    @Override
+    protected void onStart() {
+        Log.d("##########-----","onStart");
+        super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("##########-----","onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d("##########-----","onDestroy");
+        super.onDestroy();
+    }*/
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
@@ -89,12 +155,14 @@ public class BoardActivity extends Activity {
             e.printStackTrace();
         }
 
+        Log.e("#######################---------",messages.size()+"");
+
         if(messages.size() > 0) {
             generateList(board_list, R.layout.dashboard_item);
         }
         else {
-            //Intent i = new Intent(BoardActivity.this, SubsActivity.class);
-            //startActivity(i);
+            Intent i = new Intent(BoardActivity.this, SubsActivity.class);
+            startActivity(i);
         }
 
 

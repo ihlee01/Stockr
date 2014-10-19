@@ -53,18 +53,21 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         Intent notificationIntent = null;
 
+
         if(activityFound) {
             notificationIntent = new Intent(context, BoardActivity.class);
         } else {
             notificationIntent = new Intent(context, IntroActivity.class);
         }
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        //notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent intent = PendingIntent.getActivity(context,0,notificationIntent,0);
 
         notification.setLatestEventInfo(context,title, message, intent);
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         notificationManager.notify(0, notification);
+
 
     }
 
